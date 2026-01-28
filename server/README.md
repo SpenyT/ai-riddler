@@ -2,9 +2,9 @@ Welcome to Server!
 
 To run:
 ```
-// install dependencies
+# install dependencies
 pip install -r requirements.txt
 
-// runs
+# run
 uvicorn app.main:app --reload
 ```
