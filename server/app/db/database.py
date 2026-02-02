@@ -1,9 +1,12 @@
 import os
+from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 
-# In a real app, read these from environment variables (e.g., .env file)
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
-DB_NAME = "fastapi_db"
+load_dotenv()
+
+MONGO_URL = os.getenv("MONGO_URI")
+DB_NAME = os.getenv("MONGO_DB_NAME")
+
 
 class Database:
   client: AsyncIOMotorClient = None
