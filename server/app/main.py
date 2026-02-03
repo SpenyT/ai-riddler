@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.db.database import connect_to_mongo, close_mongo_connection
 from app.routers import files_router
@@ -10,6 +11,15 @@ async def lifespan(app: FastAPI):
   await close_mongo_connection()
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"], # Your Vite Frontend Port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(files_router.router, tags=["Files"], prefix="/files")
 
 @app.get("/")

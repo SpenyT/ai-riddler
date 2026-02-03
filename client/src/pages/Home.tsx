@@ -1,3 +1,5 @@
+import FileUploader from "@/components/FileUploader";
+
 export default function Home() {
   return (
     <div className="space-y-6">
@@ -8,8 +10,8 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center bg-gray-50">
-        <p className="text-gray-500">File Upload Component will go here</p>
+      <div className="flex justify-center">
+        <FileUploader />
       </div>
     </div>
   );
