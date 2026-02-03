@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 load_dotenv()
 
-MONGO_URL = os.getenv("MONGO_URI")
+MONGO_URL = os.getenv("MONGO_URL")
 DB_NAME = os.getenv("MONGO_DB_NAME")
 
 
