@@ -20,19 +20,19 @@ async def upload_file(file: UploadFile = File(...), class_in_question: str = For
   existing_file = await db["class_files"].find_one({"file_hash": file_hash})
   
   if existing_file:
-      print(f"Duplicate found! Returning existing file ID: {existing_file['_id']}")
-      return existing_file
+    print(f"Duplicate found! Returning existing file ID: {existing_file['_id']}")
+    return existing_file
   
   current_time = datetime.now()
   file_doc = {
-      "date_uploaded": current_time,
-      "relevant_date": current_time,
-      "class_in_question": class_in_question,
-      "file_type": file.content_type,
-      "filename": file.filename,
-      "size": len(file_content),
-      "file_hash": file_hash,
-      "data": bson.binary.Binary(file_content)
+    "date_uploaded": current_time,
+    "relevant_date": current_time,
+    "class_in_question": class_in_question,
+    "file_type": file.content_type,
+    "filename": file.filename,
+    "size": len(file_content),
+    "file_hash": file_hash,
+    "data": bson.binary.Binary(file_content)
   }
   
   new_file = await db["class_files"].insert_one(file_doc)
@@ -49,17 +49,15 @@ async def list_files():
 async def download_file(id: str):
   db = await get_database()
   
-  # TRY/EXCEPT block handles invalid ID formats (like "abc")
   try:
-      oid = ObjectId(id) # <--- CONVERT STRING TO OBJECTID
+    oid = ObjectId(id)
   except Exception:
-      raise HTTPException(status_code=400, detail="Invalid ID format")
+    raise HTTPException(status_code=400, detail="Invalid ID format")
 
-  # Query using the ObjectId
   file_doc = await db["class_files"].find_one({"_id": oid})
   
   if not file_doc:
-      raise HTTPException(status_code=404, detail="File not found")
+    raise HTTPException(status_code=404, detail="File not found")
 
   return Response(
     content=file_doc["data"], 

@@ -8,6 +8,8 @@ export interface FileMetadata {
   class_in_question: string;
   file_hash: string;
 }
+
+
 export interface FileResponse {
   message: string;
   data: FileMetadata[];

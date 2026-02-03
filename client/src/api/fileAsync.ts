@@ -4,12 +4,12 @@ import type { FileMetadata } from '@/types/fileTypes';
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const apiClient = axios.create({
-    baseURL: BASE_URL,
+  baseURL: BASE_URL,
 });
 
 export const getAllFiles = async (): Promise<FileMetadata[]> => {
-    const response = await apiClient.get<FileMetadata[]>('/files/'); 
-    return response.data;
+  const response = await apiClient.get<FileMetadata[]>('/files/'); 
+  return response.data;
 };
 
 export const uploadFile = async (

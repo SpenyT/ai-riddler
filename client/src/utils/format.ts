@@ -8,5 +8,5 @@ export function formatBytes(bytes: number, decimals = 2) {
 }
 
 export function formatDate(dateString: string) {
-    return new Date(dateString).toLocaleDateString();
+  return new Date(dateString).toLocaleDateString();
 }
