@@ -25,3 +25,7 @@ export const uploadFile = async (
   });
   return response.data;
 };
+
+export const getFileDownloadUrl = (id: string): string => {
+  return `${BASE_URL}/files/${id}/download`;
+};

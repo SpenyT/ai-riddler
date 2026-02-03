@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, status
+from fastapi.responses import Response
 from typing import List
 from datetime import datetime
 import bson.binary
+from bson import ObjectId
 import hashlib
 
 from app.db.database import get_database
@@ -45,13 +47,19 @@ async def list_files():
 
 @router.get("/{id}/download")
 async def download_file(id: str):
-  from fastapi.responses import Response
   db = await get_database()
   
-  file_doc = await db["class_files"].find_one({"_id": id})
+  # TRY/EXCEPT block handles invalid ID formats (like "abc")
+  try:
+      oid = ObjectId(id) # <--- CONVERT STRING TO OBJECTID
+  except Exception:
+      raise HTTPException(status_code=400, detail="Invalid ID format")
+
+  # Query using the ObjectId
+  file_doc = await db["class_files"].find_one({"_id": oid})
   
   if not file_doc:
-    raise HTTPException(status_code=404, detail="File not found")
+      raise HTTPException(status_code=404, detail="File not found")
 
   return Response(
     content=file_doc["data"], 

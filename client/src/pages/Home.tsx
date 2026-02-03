@@ -1,4 +1,5 @@
 import FileUploader from "@/components/FileUploader";
+import FileList from "@/components/FileList";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
 
       <div className="flex justify-center">
         <FileUploader />
+        <FileList />
       </div>
     </div>
   );
