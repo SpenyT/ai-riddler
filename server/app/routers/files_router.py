@@ -5,11 +5,15 @@ from datetime import datetime
 import bson.binary
 from bson import ObjectId
 import hashlib
+import os
 
 from app.db.database import get_database
 from app.models.files_model import FileMetadata
 
 router = APIRouter()
+
+file_collection : str = os.getenv("FILE_COLLECTION")
+print("files: " + file_collection)
 
 @router.post("/upload", response_description="Upload a file", response_model=FileMetadata)
 async def upload_file(file: UploadFile = File(...), class_in_question: str = Form(...)):
@@ -17,7 +21,7 @@ async def upload_file(file: UploadFile = File(...), class_in_question: str = For
   file_content = await file.read()
   file_hash = hashlib.sha256(file_content).hexdigest()
 
-  existing_file = await db["class_files"].find_one({"file_hash": file_hash})
+  existing_file = await db[file_collection].find_one({"file_hash": file_hash})
   
   if existing_file:
     print(f"Duplicate found! Returning existing file ID: {existing_file['_id']}")
@@ -35,14 +39,14 @@ async def upload_file(file: UploadFile = File(...), class_in_question: str = For
     "data": bson.binary.Binary(file_content)
   }
   
-  new_file = await db["class_files"].insert_one(file_doc)
-  created_file = await db["class_files"].find_one({"_id": new_file.inserted_id})
+  new_file = await db[file_collection].insert_one(file_doc)
+  created_file = await db[file_collection].find_one({"_id": new_file.inserted_id})
   return created_file
 
 @router.get("/", response_description="List all files (metadata only)", response_model=List[FileMetadata])
 async def list_files():
   db = await get_database()
-  files = await db["class_files"].find({}, {"data": 0}).to_list(100)
+  files = await db[file_collection].find({}, {"data": 0}).to_list(100)
   return files
 
 @router.get("/{id}/download")
@@ -54,7 +58,7 @@ async def download_file(id: str):
   except Exception:
     raise HTTPException(status_code=400, detail="Invalid ID format")
 
-  file_doc = await db["class_files"].find_one({"_id": oid})
+  file_doc = await db[file_collection].find_one({"_id": oid})
   
   if not file_doc:
     raise HTTPException(status_code=404, detail="File not found")

@@ -1,5 +1,6 @@
 import FileUploader from "@/components/FileUploader";
 import FileList from "@/components/FileList";
+import UserTestForm from "@/components/UserTestForm";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
         <FileUploader />
         <FileList />
       </div>
+      <UserTestForm />
     </div>
   );
 }
