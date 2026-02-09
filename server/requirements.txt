@@ -3,3 +3,6 @@ uvicorn
 motor
 pydantic[email]
 python-multipart
+python-jose[cryptography]
+requests
+python-dotenv
