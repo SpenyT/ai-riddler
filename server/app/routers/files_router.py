@@ -11,9 +11,7 @@ from app.db.database import get_database
 from app.models.files_model import FileMetadata
 
 router = APIRouter()
-
 file_collection : str = os.getenv("FILE_COLLECTION")
-print("files: " + file_collection)
 
 @router.post("/upload", response_description="Upload a file", response_model=FileMetadata)
 async def upload_file(file: UploadFile = File(...), class_in_question: str = Form(...)):

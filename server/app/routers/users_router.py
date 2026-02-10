@@ -7,9 +7,7 @@ from app.db.database import get_database
 from app.models.user_model import User, UserMetadata
 
 router = APIRouter()
-
 user_collection : str = os.getenv("USER_COLLECTION")
-print("users: " + user_collection)
 
 @router.post("/", response_description="Create a new user", response_model=User)
 async def create_user(user: UserMetadata):
