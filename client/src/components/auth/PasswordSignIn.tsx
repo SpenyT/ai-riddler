@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSignIn } from "@clerk/clerk-react";
 import type { PasswordSignProps } from "@/types/clerkTypes";
 import { getClerkErrorMessage } from "@/utils/clerkHelper";
@@ -12,8 +12,7 @@ export default function PasswordSignIn({ onSuccessRedirectTo, className = "" } :
   const [loading, setLoading] = useState<boolean>(false);
   const [err, setErr] = useState<string | null>(null);
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault();
+  async function onSubmit(): Promise<void> {
     if (!isLoaded || !signIn) return;
 
     setErr(null);
@@ -42,7 +41,13 @@ export default function PasswordSignIn({ onSuccessRedirectTo, className = "" } :
   }
 
   return (
-    <form onSubmit={onSubmit} className={`space-y-4 ${className}`}>
+    <form 
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+      className={`space-y-4 ${className}`}
+    >
       <div>
         <label className="text-sm text-slate-200">
           Username or email

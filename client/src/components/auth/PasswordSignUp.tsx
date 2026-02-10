@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSignUp } from "@clerk/clerk-react";
 import type { PasswordSignProps } from "@/types/clerkTypes";
 import { getClerkErrorMessage } from "@/utils/clerkHelper";
 
-export default function PasswordSignUp({ onSuccessRedirectTo = "/dashboard" }: PasswordSignProps) {
+export default function PasswordSignUp({ onSuccessRedirectTo = "/dashboard"}: PasswordSignProps) {
   const { isLoaded, signUp, setActive } = useSignUp();
 
   const [username, setUsername] = useState("");
@@ -17,8 +17,7 @@ export default function PasswordSignUp({ onSuccessRedirectTo = "/dashboard" }: P
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  async function startSignUp(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function startSignUp() {
     if (!isLoaded || !signUp) return;
 
     if (confirm && password !== confirm) {
@@ -47,8 +46,7 @@ export default function PasswordSignUp({ onSuccessRedirectTo = "/dashboard" }: P
     }
   }
 
-  async function verifyEmailCode(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function verifyEmailCode() {
     if (!isLoaded || !signUp) return;
 
     setErr(null);
@@ -74,7 +72,12 @@ export default function PasswordSignUp({ onSuccessRedirectTo = "/dashboard" }: P
 
   if (pendingVerification) {
     return (
-      <form onSubmit={verifyEmailCode} className="space-y-4">
+      <form onSubmit={(e) => {
+          e.preventDefault;
+          verifyEmailCode();}
+        } 
+        className="space-y-4"
+       >
         <div>
           <label className="text-sm text-slate-200">Email verification code</label>
           <input
@@ -108,7 +111,12 @@ export default function PasswordSignUp({ onSuccessRedirectTo = "/dashboard" }: P
   }
 
   return (
-    <form onSubmit={startSignUp} className="space-y-4">
+    <form onSubmit={(e) => {
+        e.preventDefault;
+        startSignUp();}
+      } 
+      className="space-y-4"
+    >
       <div>
         <label className="text-sm text-slate-200">Username</label>
         <input

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSignIn } from "@clerk/clerk-react";
 import type { SupportedFirstFactor } from "@/types/clerkTypes";
 import { getClerkErrorMessage, isEmailCodeFactor } from "@/utils/clerkHelper";
@@ -48,8 +48,7 @@ export default function EmailCodeSignIn() {
     }
   }
 
-  async function verifyCode(e: React.FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault();
+  async function verifyCode(): Promise<void> {
     if (!isLoaded || !signIn) return;
 
     setErr(null);
@@ -105,7 +104,12 @@ export default function EmailCodeSignIn() {
           </button>
         </>
       ) : (
-        <form onSubmit={verifyCode} className="space-y-4">
+        <form onSubmit={(e) => {
+            e.preventDefault;
+            verifyCode();}
+          }
+          className="space-y-4"
+        >
           <div>
             <label className="text-sm text-slate-200">Verification code</label>
             <input
