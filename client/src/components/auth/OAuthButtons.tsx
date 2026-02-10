@@ -1,5 +1,5 @@
-import { useSignIn } from "@clerk/clerk-react";
-import type { OAuthStrategy, OAuthProvider, OAuthButtonsRowProps } from "@/types/clerkTypes";
+import { useSignIn, useSignUp } from "@clerk/clerk-react";
+import type { OAuthStrategy, OAuthProvider, OAuthButtonsProps } from "@/types/clerkTypes";
 
 const PROVIDERS: Array<{
   provider: OAuthProvider;
@@ -31,13 +31,29 @@ const PROVIDERS: Array<{
   },
 ];
 
-export default function OAuthButtonsRow({ redirectUrl = "/auth/callback", redirectUrlComplete = "/dashboard" } : OAuthButtonsRowProps) {
-  const { isLoaded, signIn } = useSignIn();
+export default function OAuthButtons({ 
+  redirectUrl = "/auth/callback",
+  redirectUrlComplete = "/dashboard",
+  signMode = "signin"
+} : OAuthButtonsProps) {
+  const { isLoaded: signInLoaded, signIn } = useSignIn();
+  const { isLoaded: signUpLoaded, signUp } = useSignUp();
 
-  async function startOAuth(strategy: OAuthStrategy): Promise<void> {
-    if (!isLoaded || !signIn) return;
+  const isLoaded = signMode === "signin" ? signInLoaded : signUpLoaded;
 
-    await signIn.authenticateWithRedirect({
+  async function startOAuth(strategy: OAuthStrategy) {
+    if (signMode === "signin") {
+      if (!signInLoaded || !signIn) return;
+      await signIn.authenticateWithRedirect({
+        strategy,
+        redirectUrl,
+        redirectUrlComplete,
+      });
+      return;
+    }
+
+    if (!signUpLoaded || !signUp) return;
+    await signUp.authenticateWithRedirect({
       strategy,
       redirectUrl,
       redirectUrlComplete,

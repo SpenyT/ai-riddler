@@ -2,11 +2,12 @@ import type { SignInResource } from "@clerk/types";
 
 export type OAuthStrategy = "oauth_google" | "oauth_github" | "oauth_apple";
 export type OAuthProvider = "google" | "github" | "apple";
+export type SignMode = "signin" | "signup";
 
-export type OAuthButtonsRowProps = {
+export type OAuthButtonsProps = {
   redirectUrl?: string;
   redirectUrlComplete?: string;
-  className?: string;
+  signMode?: SignMode;
 };
 
 export type PasswordSignProps = {

@@ -4,9 +4,10 @@ import RootLayout from "@/routing/RootLayout";
 import DashboardLayout from "./DashboardLayout";
 import AuthCallback from "@/components/auth/AuthCallback";
 
+import SignInPage from "@/pages/SignInPage";
+import SignUpPage from "@/pages/SignUpPage";
 import Home from "@/pages/Home";
 import MainDash from "@/pages/dashboard/MainDash";
-import SignInPage from "@/pages/SignInPage";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
   {
     path:"/sign-in",
     Component: SignInPage
+  },
+    {
+    path:"/sign-up",
+    Component: SignUpPage
   },
   {
     path:"/auth/callback",
