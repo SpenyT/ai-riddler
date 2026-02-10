@@ -2,9 +2,11 @@ import { createBrowserRouter } from "react-router";
 
 import RootLayout from "@/routing/RootLayout";
 import DashboardLayout from "./DashboardLayout";
+import AuthCallback from "@/components/auth/AuthCallback";
 
 import Home from "@/pages/Home";
 import MainDash from "@/pages/dashboard/MainDash";
+import SignInPage from "@/pages/SignInPage";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +23,14 @@ const router = createBrowserRouter([
       }
     ]
   },
+  {
+    path:"/sign-in",
+    Component: SignInPage
+  },
+  {
+    path:"/auth/callback",
+    Component: AuthCallback
+  }
 ]);
 
 export default router;
