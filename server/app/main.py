@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+
 from contextlib import asynccontextmanager
 from app.db.database import connect_to_mongo, close_mongo_connection
-from app.routers import files_router, users_router
+from app.routers import files_router, users_router, users_router_public
+
+from server.app.auth.full_auth import require_user_ctx
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,8 +23,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(files_router.router, tags=["Files"], prefix="/files")
-app.include_router(users_router.router, tags=["Users"], prefix="/users")
+app.include_router(files_router.router, prefix="/files", tags=["Files"])
+
+app.include_router(users_router_public, prefix="/users", tags=["Users"])
+app.include_router(users_router, prefix="/users", tags=["Users"], dependencies=[Depends(require_user_ctx)])
 
 @app.get("/")
 async def root():

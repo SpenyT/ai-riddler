@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { uploadFile } from '@/api/fileAsync';
+import { useFilesApi } from '@/api/useFilesApi';
 
 export default function FileUploader() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -7,13 +7,15 @@ export default function FileUploader() {
   const [status, setStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
+  const filesApi = useFilesApi();
+
   const handleUpload = async () => {
     if (!selectedFile || !className) return;
 
     setStatus("uploading");
     try {
       // Just pass file and class name now
-      const result = await uploadFile(selectedFile, className);
+      const result = await filesApi.uploadFile(selectedFile, className);
       
       setStatus("success");
       setMessage(`Success! Uploaded: ${result.filename}`);

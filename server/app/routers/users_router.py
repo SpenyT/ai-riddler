@@ -1,48 +1,49 @@
-from fastapi import APIRouter, HTTPException, status
-from pydantic import EmailStr
+from fastapi import APIRouter, Request, HTTPException, status
 from datetime import datetime
 import os
 
 from app.db.database import get_database
-from app.models.user_model import User, UserMetadata
+from app.models.user_model import User, UserUpdate
 
 router = APIRouter()
-user_collection : str = os.getenv("USER_COLLECTION")
+USER_COLLECTION: str = os.getenv("USER_COLLECTION")
 
-@router.post("/", response_description="Create a new user", response_model=User)
-async def create_user(user: UserMetadata):
+
+@router.get("/me", response_model=User)
+async def get_me(request: Request):
+  return request.state.user
+
+
+@router.patch("/me", response_model=User)
+async def update_me(payload: UserUpdate, request: Request):
   db = await get_database()
-  existing_user = await db[user_collection].find_one({"clerk_id": user.clerk_id})
+  existing = request.state.user
 
-  if existing_user:
-    await db[user_collection].update_one(
-      {"_id": existing_user["_id"]}, 
-      {"$set": {"last_login": datetime.now()}}
-    )
-    return existing_user
-  
-  current_time = datetime.now()
-  user_doc = {
-    "clerk_id": user.clerk_id,
-    "email": user.email,
-    "first_name": user.first_name,
-    "last_name": user.last_name,
-    "classes": [],
-    "created_at": current_time,
-    "last_login": current_time
-  }
+  update_data = payload.model_dump(exclude_unset=True)
 
-  new_user = await db[user_collection].insert_one(user_doc)
-  created_user = await db[user_collection].find_one({"_id": new_user.inserted_id})
-  return created_user
+  if not update_data:
+    return existing
+
+  update_data["updated_at"] = datetime.now()
+
+  await db[USER_COLLECTION].update_one(
+    {"_id": existing["_id"]},
+    {"$set": update_data},
+  )
+  return await db[USER_COLLECTION].find_one({"_id": existing["_id"]})
 
 
-@router.get("/{clerk_id}", response_description="Get user details", response_model=User)
-async def get_user(clerk_id: str):
+@router.delete("/me", response_model=User)
+async def delete_me(request: Request):
   db = await get_database()
-  existing_user = await db[user_collection].find_one({"clerk_id": clerk_id})
+  existing = request.state.user
 
-  if not existing_user:
-    raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found")
+  if existing.get("deleted_date") is not None:
+    return existing
 
-  return existing_user
+  now = datetime.now()
+  await db[USER_COLLECTION].update_one(
+    {"_id": existing["_id"]},
+    {"$set": {"deleted_date": now, "is_active": False, "updated_at": now}},
+  )
+  return await db[USER_COLLECTION].find_one({"_id": existing["_id"]})

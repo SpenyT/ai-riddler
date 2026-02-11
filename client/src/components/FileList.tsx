@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 // Import the types and functions we defined
 import type { FileMetadata } from "@/types/fileTypes";
-import { getAllFiles, getFileDownloadUrl } from "@/api/fileAsync";
+import { useFilesApi } from "@/api/useFilesApi";
 import { formatBytes, formatDate } from "@/utils/format";
 
 export default function FileList() {
@@ -10,11 +10,12 @@ export default function FileList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const filesApi = useFilesApi()
+
   const fetchFiles = async () => {
     try {
       setLoading(true);
-      // Use the API function
-      const data = await getAllFiles();
+      const data = await filesApi.getAllFiles();
       setFiles(data);
       setError("");
     } catch (err) {
@@ -66,7 +67,7 @@ export default function FileList() {
                 <td className="px-6 py-4 text-right">
                   {/* Use the helper function here */}
                   <a
-                    href={getFileDownloadUrl(file._id)}
+                    href={filesApi.getFileDownloadUrl(file._id)}
                     className="text-blue-600 hover:underline font-medium"
                     download // Hint to browser to download instead of open
                   >

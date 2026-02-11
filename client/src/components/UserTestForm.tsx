@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createUser, getUser } from "@/api/userAsync";
+import { useUsersApi } from "@/api/useUsersApi";
 import type { User } from "@/types/userTypes";
 
 export default function UserTestForm() {
@@ -14,6 +14,8 @@ export default function UserTestForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
+  const usersApi = useUsersApi()
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -25,7 +27,7 @@ export default function UserTestForm() {
     setResult(null);
 
     try {
-      const user = await createUser(formData);
+      const user = await usersApi.createUser();
       setResult(user);
       setStatus("success");
       setMessage("User created/synced successfully!");
@@ -39,7 +41,7 @@ export default function UserTestForm() {
     if (!formData.clerk_id) return;
     setStatus("loading");
     try {
-      const user = await getUser(formData.clerk_id);
+      const user = await usersApi.getUser();
       setResult(user);
       setStatus("success");
       setMessage("User fetched from DB!");

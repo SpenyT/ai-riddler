@@ -80,11 +80,11 @@ def verify_clerk_jwt(token: str) -> dict:
     raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 
-def require_user(request: Request) -> str:
+def extract_clerk_data(request: Request) -> str:
   token = get_bearer_token(request)
   claims = verify_clerk_jwt(token)
 
   user_id = claims.get("sub")
   if not user_id:
     raise HTTPException(status_code=401, detail="Token missing subject")
-  return user_id
+  return user_id, claims
